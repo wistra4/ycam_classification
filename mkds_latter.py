@@ -7,9 +7,11 @@ import math
 import librosa
 import soundfile as sf
 import random
+import csv
 
 ds_file = "/.DS_Store" # ds_storeディレクトリ名
 p_nums = []
+c_dic = {}
 
 b_path = "./dataset" # baseパス
 # print(b_path)
@@ -18,15 +20,30 @@ if os.path.exists(b_path + ds_file): # DS_Storeファイルを消去
     # print("DS_File was removed.")
 c_dirs= os.listdir(b_path) # classディレクトリを抽出
 # print(c_dirs)
+f_num = 1
+# ここにCSV書き込み用のディクショナリ生成とクラス番号割り振りのコードを作る
+for c_dir in c_dirs:
+    before_path = b_path + "/" + c_dir
+    if f_num <= 9:
+        f_numstr = "0" + str(f_num)
+    elif 10 <= f_num:
+        f_numstr = str(f_num)
+    f_num += 1
+    after_path = b_path + "/" + f_numstr + "_" + c_dir.split("_")[1]
+    # print(after_path)
+    os.rename(before_path, after_path)
 
+c_dirs= os.listdir(b_path)
 for c_dir in c_dirs:
     c_path = b_path + "/" + c_dir # classパス
     c_num = c_dir.split("_")[0]
+    c_category = c_dir.split("_")[1]
+    c_dic[c_num] = c_category
     # print(c_num)
     # print(c_path)
     if os.path.exists(c_path + ds_file): # DS_Storeファイルを消去
         os.remove(c_path + ds_file)
-        print("DS_File was removed.")
+        # print("DS_File was removed.")
     d_files = os.listdir(c_path) # genusディレクトリを抽出
     # print(d_files)
     
@@ -127,6 +144,7 @@ for wav_dir in wav_dirs:
 left = 1
 pre_idx = 1
 c_datas = []
+all_datas = []
 
 datas = os.listdir(b_path)
 datas.sort()
@@ -134,11 +152,11 @@ datas.sort()
 for data in datas:
     c_idx = data.split("_")[2].split(".")[0]
     if c_idx != pre_idx:
-        print("class"+str(int(c_idx)-1))
-        print(len(c_datas))
+        # print("class"+str(int(c_idx)-1))
+        # print(len(c_datas))
         k_num = 1
         k_split = math.floor(len(c_datas)/5)
-        print(k_split)
+        # print(k_split)
         k_spcopy = k_split
         random.shuffle(c_datas)
         # print(c_datas)
@@ -150,12 +168,12 @@ for data in datas:
             else:
                 k_spcopy = k_split-1
                 k_num += 1
-                
+            
             if k_num <= 5:
-                after_path = b_path + "/" + str(k_num) + "_" + c_data
+                after_path = b_path + "/" + str(k_num) + "-" + c_data
             elif k_num == 6:
-                print("k_num:",str(left))
-                after_path = b_path + "/" + str(left) + "_" + c_data
+                # print("k_num:",str(left))
+                after_path = b_path + "/" + str(left) + "-" + c_data
                 if left < 5:
                     left += 1
                 else:
@@ -170,11 +188,12 @@ for data in datas:
     else:
         c_datas.append(data)
     pre_idx = c_idx
-print("class"+c_idx)
-print(len(c_datas))
+    all_datas.append(data)
+# print("class"+c_idx)
+# print(len(c_datas))
 k_num = 1
 k_split = math.floor(len(c_datas)/5)
-print(k_split)
+# print(k_split)
 k_spcopy = k_split
 random.shuffle(c_datas)
 # print(c_datas)
@@ -188,10 +207,10 @@ for c_data in c_datas:
         k_num += 1
 
     if k_num <= 5:
-        after_path = b_path + "/" + str(k_num) + "_" + c_data
+        after_path = b_path + "/" + str(k_num) + "-" + c_data
     elif k_num == 6:
-        print("k_num:",str(left))
-        after_path = b_path + "/" + str(left) + "_" + c_data
+        # print("k_num:",str(left))
+        after_path = b_path + "/" + str(left) + "-" + c_data
         if left < 5:
             left += 1
         else:
@@ -201,3 +220,32 @@ for c_data in c_datas:
     # print(before_path)
     # print(after_path)
     os.rename(before_path, after_path)
+print(len(all_datas))
+
+with open("ycam.csv", "w") as f:
+    ycam_csv = csv.writer(f)
+    ycam_csv.writerow(["filename", "fold", "target", "category", "esc10", "src_file", "take"])
+
+data_files= os.listdir(b_path) # classディレクトリを抽出
+# print(c_dic)
+esc10 = "False"
+for filename in data_files:
+    # print(filename)
+    fold = filename.split("-")[0]
+    # print(fold)
+    target = filename.split("_")[2].split(".")[0]
+    # print(target)
+    if len(target) == 1:
+        c_key = "0"+target
+    else:
+        c_key = target
+    category = c_dic[c_key]
+    # print(target)
+    # print(category)
+    src_file = filename.split("-")[1].split("_")[0]
+    # print(src_file)
+    take = filename.split("_")[1]
+    # print(take)
+    with open("ycam.csv", "a", newline="") as f:
+        ycam_csv = csv.writer(f)
+        ycam_csv.writerow([filename, fold, target, category, esc10, src_file, take])

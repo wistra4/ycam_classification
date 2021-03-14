@@ -8,7 +8,7 @@ b_path = "./dataset" # baseパス
 # print(b_path)
 if os.path.exists(b_path + ds_file): # DS_Storeファイルを消去
     os.remove(b_path + ds_file)
-    print("DS_File was removed.")
+    # print("DS_File was removed.")
 c_dirs= os.listdir(b_path) # classディレクトリを抽出
 # print(c_dirs)
 
@@ -19,7 +19,7 @@ for c_dir in c_dirs:
     # print(c_path)
     if os.path.exists(c_path + ds_file): # DS_Storeファイルを消去
         os.remove(c_path + ds_file)
-        print("DS_File was removed.")
+        # print("DS_File was removed.")
     g_dirs = os.listdir(c_path) # genusディレクトリを抽出
     # print(g_dirs)
 
@@ -30,7 +30,7 @@ for c_dir in c_dirs:
         # print(g_num)
         if os.path.exists(g_path + ds_file): # DS_Storeファイルを消去
             os.remove(g_path + ds_file)
-            print("DS_File was removed.")
+            # print("DS_File was removed.")
         s_dirs = os.listdir(g_path) # speciesディレクトリを抽出
         # print(s_dirs)
 
@@ -41,7 +41,7 @@ for c_dir in c_dirs:
             # print(s_path)
             if os.path.exists(s_path + ds_file): # DS_Storeファイルを消去
                 os.remove(s_path + ds_file)
-                print("DS_File was removed.")
+                # print("DS_File was removed.")
             d_files = os.listdir(s_path) # dataファイルを抽出
             # print(d_files)
             d_num = 1
