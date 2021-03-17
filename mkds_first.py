@@ -4,7 +4,7 @@ import os
 ds_file = "/.DS_Store" # ds_storeディレクトリ名
 p_nums = []
 
-b_path = "./dataset" # baseパス
+b_path = "./master/audio" # baseパス
 # print(b_path)
 if os.path.exists(b_path + ds_file): # DS_Storeファイルを消去
     os.remove(b_path + ds_file)

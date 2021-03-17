@@ -13,7 +13,7 @@ ds_file = "/.DS_Store" # ds_storeディレクトリ名
 p_nums = []
 c_dic = {}
 
-b_path = "./dataset" # baseパス
+b_path = "./master/audio" # baseパス
 # print(b_path)
 if os.path.exists(b_path + ds_file): # DS_Storeファイルを消去
     os.remove(b_path + ds_file)
@@ -222,7 +222,11 @@ for c_data in c_datas:
     os.rename(before_path, after_path)
 print(len(all_datas))
 
-with open("ycam.csv", "w") as f:
+meta_dir = "./master/meta"
+if not os.path.exists(meta_dir):
+    os.mkdir(meta_dir)
+
+with open(meta_dir + "/ycam.csv", "w") as f:
     ycam_csv = csv.writer(f)
     ycam_csv.writerow(["filename", "fold", "target", "category", "esc10", "src_file", "take"])
 
@@ -246,6 +250,6 @@ for filename in data_files:
     # print(src_file)
     take = filename.split("_")[1]
     # print(take)
-    with open("ycam.csv", "a", newline="") as f:
+    with open(meta_dir + "/ycam.csv", "a", newline="") as f:
         ycam_csv = csv.writer(f)
         ycam_csv.writerow([filename, fold, target, category, esc10, src_file, take])
