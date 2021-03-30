@@ -285,7 +285,7 @@ if not os.path.exists(model_dir):
 
 # early stopping and model checkpoint# early  
 es_cb = EarlyStopping(monitor='val_loss', patience=10, verbose=1, mode='auto')
-chkpt = os.path.join(model_dir, 'esc50_.{epoch:02d}.hdf5')
+chkpt = os.path.join(model_dir, 'ycam_.{epoch:02d}.hdf5')
 cp_cb = ModelCheckpoint(filepath = chkpt, monitor='val_loss', verbose=1, save_best_only=True, mode='auto')
 
 # between class data generator
@@ -346,6 +346,6 @@ model.fit_generator(generator=training_generator,
                     shuffle=True,
                     callbacks=[es_cb, cp_cb])
 
-model = load_model(model_dir + "/esc50_.27.hdf5")
+model = load_model(model_dir + "/esc50_.58.hdf5")
 evaluation = model.evaluate(x_test, y_test)
 print(evaluation)

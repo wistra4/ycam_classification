@@ -2,8 +2,10 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,python
 
 audio/
+dataset/
 *.npz
-models/*
+models/
+recording/
 
 ### macOS ###
 # General
