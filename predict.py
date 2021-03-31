@@ -95,16 +95,39 @@ for wav_dir in wav_dirs:
 from keras.models import load_model
 import numpy as np
 
-model = load_model("/models/esc50_.57.hdf5")
+model = load_model("./master/models/esc50_.58.hdf5")
 
-x, fs = librosa.load("/recording/AB04_04.wav", sr=44100)
+rec = []
+rec_dirs = os.listdir(b_path)
+if os.path.exists(b_path + ds_file):
+    os.remove(b_path + ds_file)
+for rec_dir in rec_dirs:
+    rec_path = b_path + "/" + rec_dir
+    rec.append(rec_path)
+# print(rec)
+# print(len(rec))
+rec.sort()
 
+freq = 128
+time = 1723
+def calculate_melsp(x, n_fft=1024, hop_length=128):
+    stft = np.abs(librosa.stft(x, n_fft=n_fft, hop_length=hop_length))**2
+    log_stft = librosa.power_to_db(stft)
+    melsp = librosa.feature.melspectrogram(S=log_stft,n_mels=128)
+    return melsp
 
-stft = np.abs(librosa.stft(x, n_fft=n_fft, hop_length=hop_length))**2
-log_stft = librosa.power_to_db(stft)
-melsp = librosa.feature.melspectrogram(S=log_stft,n_mels=128)
+c_dic = {1:"hiyodori", 2:"kogera", 3:"mejiro", 4:"yamagara", 5:"shijukara"}
+for r_num in range(len(rec)):
+    np_data = np.zeros(freq*time).reshape(1, freq, time)
+    _rec, fs = librosa.load(rec[r_num], sr=44100)
+    _rec = calculate_melsp(_rec)
+    np_data = _rec
 
-print(melsp)
-result = model.predict_classes(sound)
-print(result)
-
+    test_num = len(rec)
+    np_data = np_data.reshape(1, freq, time, 1)
+    # print(np_data)
+    result = model.predict(np_data)
+    print(rec[r_num])
+    # print(result)
+    predict_classes = np.argmax(result, axis=1)
+    print(str(predict_classes[0])+":"+str(c_dic[predict_classes[0]]))
