@@ -216,7 +216,7 @@ x_test = test_data["x"]
 y_test = test_data["y"]
 
 # redefine target data into one hot vector
-classes = 11
+classes = 5
 y_train = keras.utils.to_categorical(y_train, classes)
 y_test = keras.utils.to_categorical(y_test, classes)
 

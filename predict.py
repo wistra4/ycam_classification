@@ -6,6 +6,7 @@ from pydub import AudioSegment
 import librosa
 import soundfile as sf
 import math
+import csv
 
 ds_file = "/.DS_Store"
 
@@ -116,6 +117,14 @@ def calculate_melsp(x, n_fft=1024, hop_length=128):
     melsp = librosa.feature.melspectrogram(S=log_stft,n_mels=128)
     return melsp
 
+result_dir = "./master/result"
+if not os.path.exists(result_dir):
+    os.mkdir(result_dir)
+
+with open(result_dir + "/result.csv", "w") as f:
+    result_csv = csv.writer(f)
+    result_csv.writerow(["filename", "base", "num", "span", "target", "category"])
+
 c_dic = {1:"hiyodori", 2:"kogera", 3:"mejiro", 4:"yamagara", 5:"shijukara"}
 for r_num in range(len(rec)):
     np_data = np.zeros(freq*time).reshape(1, freq, time)
@@ -130,4 +139,20 @@ for r_num in range(len(rec)):
     print(rec[r_num])
     # print(result)
     predict_classes = np.argmax(result, axis=1)
-    print(str(predict_classes[0])+":"+str(c_dic[predict_classes[0]]))
+    print(str(predict_classes[0])+":"+c_dic[predict_classes[0]])
+    
+    filename = rec[r_num].split("/")[3]
+    print(filename)
+    base = filename.split("_")[0]
+    print(base)
+    num = filename.split("_")[1].split(".")[0]
+    print(num)
+    span = str((int(num)-1)*5)+"~"+str(int(num)*5)
+    print(time)
+    target = str(predict_classes[0])
+    print(target)
+    category = c_dic[predict_classes[0]]
+    print(category)
+    with open(result_dir + "/result.csv", "a", newline="") as f:
+        result_csv = csv.writer(f)
+        result_csv.writerow([filename, base, num, span, target, category])
